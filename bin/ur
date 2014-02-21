@@ -1,0 +1,55 @@
+#! /usr/bin/env node
+
+var program = require('commander')
+var colors = require('colors')
+var pjson = require('../package.json')
+var ur = require('../')
+
+function handleError(err) {
+  console.error(err.message.red)
+  process.exit(1)
+}
+
+function formatAndErrorExit(msg, deps) {
+  console.log(msg.red)
+  console.log(deps.join('\n').yellow)
+  process.exit(1)
+}
+
+function formatAndWarnExit(msg, deps) {
+  console.log(msg.yellow)
+  console.log(deps.join('\n').yellow)
+  process.exit(1)
+}
+
+program.version(pjson.version)
+
+program.command('required <path>')
+  .description('find dependencies that are required but not in package.json')
+  .action(function(path) {
+    ur.required(path, function(err, required) {
+      if (err) return handleError(err)
+
+      if (required.length == 0) {
+        process.exit()
+      }
+
+      formatAndErrorExit('Found dependencies that are required but not in package.json:', required)
+    })
+  })
+
+program.command('unrequired <path>')
+  .description('find dependencies that are in package.json but not required')
+  .action(function(path) {
+    ur.unrequired(path, function(err, unrequired) {
+      if (err) return handleError(err)
+
+      if (unrequired.length == 0) {
+        process.exit()
+      }
+
+      formatAndWarnExit('Found dependencies that are package.json but not required:', unrequired)
+    })
+  })
+
+program.parse(process.argv)

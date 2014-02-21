@@ -14,10 +14,17 @@ var builtins = require('builtins')
  */
 function getPackageJsonDependencies(dirPath, cb) {
   fs.readFile(path.join(dirPath, 'package.json'), function(err, pJson) {
-    if (err) return cb(err)
+    if (err) {
+      if (err.code == 'ENOENT') {
+        return cb(new Error('Could not find package.json file in ' + dirPath))
+      }
+      else {
+        return cb(err)
+      }
+    }
     pJson = JSON.parse(pJson)
     if (!pJson.dependencies) {
-      return cb(new Error("No .dependencies in package.json."))
+      pJson.dependencies = {}
     }
 
     // TODO: handle dev dependencies as well?
@@ -100,8 +107,8 @@ function getRequiresAndDeps(filePath, cb) {
  *
  * @param filePath String - a path to a directory with a package.json file and
  *   some js files
- *  @param cb Function - cb(error, files) will be called with either an error
- *    or null and an array of reuquired but not in package.json dependencies.
+ *  @param cb Function - cb(err, required) will be called with either an error
+ *  or null and an array of reuquired but not in package.json dependencies.
  */
 function requiredButNotInPackageDependencies(filePath, cb) {
   getRequiresAndDeps(filePath, function(err, res) {
@@ -119,8 +126,8 @@ function requiredButNotInPackageDependencies(filePath, cb) {
  *
  * @param filePath String - a path to a directory with a package.json file and
  *   some js files
- *  @param cb Function - cb(error, files) will be called with either an error
- *    or null and an array of unrequired dependencies.
+ *  @param cb Function - cb(err, unrequired) will be called with either an
+ *    error or null and an array of unrequired dependencies.
  */
 function dependenciesButUnrequired(filePath, cb) {
   getRequiresAndDeps(filePath, function(err, res) {

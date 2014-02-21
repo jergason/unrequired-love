@@ -1,22 +1,28 @@
 {
-  "name": "unrequired-love",
-  "version": "0.0.0",
-  "description": "Analyze a node project for packages that are required but not included in the package.json",
+  "name": "ur",
+  "version": "0.0.1",
+  "description": "Analyze a node project for packages that are required but not included in the package.json, or in package.json but not required.",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/index_test.js"
   },
+  "bin": {
+    "ur": "./bin/ur"
+  },
   "keywords": [
     "require",
     "analyze",
-    "package.json"
+    "package.json",
+    "unrequired-love"
   ],
   "dependencies": {
     "recursive-readdir": "0.0.2",
     "detective": "~2.4.0",
     "async": "~0.2.10",
     "underscore": "~1.6.0",
-    "builtins": "0.0.2"
+    "builtins": "0.0.2",
+    "commander": "~2.1.0",
+    "colors": "~0.6.2"
   },
   "author": "Jamison Dance <http://jamisondance.com> (jergason@gmail.com)",
   "license": "BSD-2-Clause",
