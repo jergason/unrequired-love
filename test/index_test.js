@@ -3,6 +3,10 @@ var fs = require('fs')
 var path = require('path')
 var unrequiredLove = require('../index')
 
+function contains(array, item) {
+  return array.indexOf(item) != -1
+}
+
 describe('unrequiredLove', function() {
   describe('getPackageJsonDependencies', function() {
     it('gives you a list of all package.json dependencies', function(done) {
@@ -18,7 +22,7 @@ describe('unrequiredLove', function() {
     it('lists all files in a dir', function(done) {
       unrequiredLove.allNonNodeModuleJsFiles(__dirname, function(err, files) {
         assert.ifError(err)
-        assert.equal(files.length, 3)
+        assert.equal(files.length, 4)
         done()
       })
     })
@@ -45,7 +49,30 @@ describe('unrequiredLove', function() {
     it('calls cb with a list of deps in package.json but not in files', function(done) {
       unrequiredLove.unrequired(path.join(__dirname, 'unrequired'), function(err, res) {
         assert.ifError(err)
-        console.log('res is', res)
+        assert.equal(res.length, 2)
+        assert(contains(res, 'foo'))
+        assert(contains(res, 'beans'))
+        done()
+      })
+    })
+  })
+
+  describe('required', function() {
+    it('calls cb with a list of deps that are required but not in the package.json file', function(done) {
+      unrequiredLove.required(path.join(__dirname, 'required'), function(err, res) {
+        assert.ifError(err)
+        assert(contains(res, 'underscore'))
+        assert(contains(res, 'commander'))
+        done()
+      })
+    })
+
+    it('doesn\'t count node built-ins', function(done) {
+      unrequiredLove.required(path.join(__dirname, 'required'), function(err, res) {
+        assert.ifError(err)
+        assert(!contains(res, 'path'))
+        assert(!contains(res, 'fs'))
+        assert(!contains(res, 'http'))
         done()
       })
     })

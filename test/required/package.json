@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "request": "durp",
+    "express": "bar",
+    "angular": "YES PLEASE"
+  },
+  "devDependencies": {}
+}

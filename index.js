@@ -10,18 +10,12 @@ var _ = require('underscore')
 var builtins = require('builtins')
 
 /**
- * What does this need to do?
- * given a directory, it reads in the dependencies from its
- * package.json, then lists all the files in the directory besides node_modules,
- * and then runs substack's thing on them, and then eliminates all relative
- * requires, and then dedupes the list to a list of packages, and then
- *  gets the diff both ways.
+ * Find the package.json in a directory and return its dependencies.
  */
 function getPackageJsonDependencies(dirPath, cb) {
   fs.readFile(path.join(dirPath, 'package.json'), function(err, pJson) {
     if (err) return cb(err)
     pJson = JSON.parse(pJson)
-    pJson.devDependencies = pJson.devDependencies || {}
     if (!pJson.dependencies) {
       return cb(new Error("No .dependencies in package.json."))
     }
@@ -53,13 +47,11 @@ function allNonNodeModuleJsFiles(dirPath, cb) {
 }
 
 function findRequiresInFile(filePath, cb) {
-  console.log('getting requires for file', filePath)
   fs.readFile(filePath, {encoding: 'utf8'}, function(err, file) {
     if (err) return cb(err)
     if (!file) return cb(new Error('no file for ' + filePath))
 
     var requires = detective(file)
-    console.log('requires are', requires)
     return cb(null, requires)
   })
 }
