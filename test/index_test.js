@@ -41,7 +41,6 @@ describe('unrequiredLove', function() {
   describe('unrequired', function() {
     it('calls cb with an error if it cannot find a package.json file', function(done) {
       unrequiredLove.unrequired(__dirname, function(err, res) {
-        console.log('error is', err)
         assert(err)
         done()
       })
