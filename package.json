@@ -9,6 +9,10 @@
   "bin": {
     "ur": "./bin/ur"
   },
+  "repository": {
+    "url": "git@github.com:jergason/unrequired-love.git",
+    "type": "git"
+  },
   "keywords": [
     "require",
     "analyze",
