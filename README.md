@@ -2,7 +2,7 @@
 
 ur finds problems with node dependencies. It can find depenedencies in your
 package.json that you never `require`, or find depdendencies you `require`
-that you didn't put in your pakcage.json. It ignores relative requires and node built-ins, and uses [detective](https://github.com/substack/node-detective) to be smart about finding all requires.
+that you didn't put in your package.json. It ignores relative requires and node built-ins, and uses [detective](https://github.com/substack/node-detective) to be smart about finding all requires.
 
 ## Installation
 By default `ur` gives you a binary, so you might want to install it globally.
