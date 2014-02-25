@@ -18,17 +18,17 @@ describe('unrequiredLove', function() {
     })
   })
 
-  describe('allNonNodeModuleJsFiles', function() {
+  describe('allNonNodeModuleJsOrCsFiles', function() {
     it('lists all files in a dir', function(done) {
-      unrequiredLove.allNonNodeModuleJsFiles(__dirname, function(err, files) {
+      unrequiredLove.allNonNodeModuleJsOrCsFiles(__dirname, function(err, files) {
         assert.ifError(err)
-        assert.equal(files.length, 4)
+        assert.equal(files.length, 5)
         done()
       })
     })
 
     it('ignores files in any node_modules directories', function(done) {
-      unrequiredLove.allNonNodeModuleJsFiles(path.join(__dirname, 'nmTest'), function(err, files) {
+      unrequiredLove.allNonNodeModuleJsOrCsFiles(path.join(__dirname, 'nmTest'), function(err, files) {
         assert.ifError(err)
         assert(files.length, 1)
         var relativeToHere = path.relative(__dirname, files[0])
@@ -48,6 +48,16 @@ describe('unrequiredLove', function() {
 
     it('calls cb with a list of deps in package.json but not in files', function(done) {
       unrequiredLove.unrequired(path.join(__dirname, 'unrequired'), function(err, res) {
+        assert.ifError(err)
+        assert.equal(res.length, 2)
+        assert(contains(res, 'foo'))
+        assert(contains(res, 'beans'))
+        done()
+      })
+    })
+
+    it('works with coffeescript files', function(done) {
+      unrequiredLove.unrequired(path.join(__dirname, 'unrequiredCoffee'), function(err, res) {
         assert.ifError(err)
         assert.equal(res.length, 2)
         assert(contains(res, 'foo'))

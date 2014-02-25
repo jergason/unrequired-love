@@ -1,6 +1,6 @@
 {
   "name": "ur",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Analyze a node project for packages that are required but not included in the package.json, or in package.json but not required.",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,8 @@
     "underscore": "~1.6.0",
     "builtins": "0.0.2",
     "commander": "~2.1.0",
-    "colors": "~0.6.2"
+    "colors": "~0.6.2",
+    "coffee-script": "1.7.1"
   },
   "author": "Jamison Dance <http://jamisondance.com> (jergason@gmail.com)",
   "license": "BSD-2-Clause",

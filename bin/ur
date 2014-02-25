@@ -24,9 +24,12 @@ function formatAndWarnExit(msg, deps) {
 
 program.version(pjson.version)
 
-program.command('required <path>')
-  .description('find dependencies that are required but not in package.json')
+program.command('req [path]')
+  .description('find dependencies that are required but not in package.json. defaults to cwd.')
   .action(function(path) {
+    if (!path) {
+      path = process.cwd()
+    }
     ur.required(path, function(err, required) {
       if (err) return handleError(err)
 
@@ -38,9 +41,12 @@ program.command('required <path>')
     })
   })
 
-program.command('unrequired <path>')
-  .description('find dependencies that are in package.json but not required')
+program.command('unreq [path]')
+  .description('find dependencies that are in package.json but not required. defaults to cwd.')
   .action(function(path) {
+    if (!path) {
+      path = process.cwd()
+    }
     ur.unrequired(path, function(err, unrequired) {
       if (err) return handleError(err)
 

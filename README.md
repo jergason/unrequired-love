@@ -2,7 +2,10 @@
 
 ur finds problems with node dependencies. It can find dependencies in your
 package.json that you never `require`, or find dependencies you `require`
-that you didn't put in your package.json. It ignores relative requires and node built-ins, and uses [detective](https://github.com/substack/node-detective) to be smart about finding all requires.
+that you didn't put in your package.json. It ignores relative requires and node
+built-ins, and uses [detective](https://github.com/substack/node-detective) to
+be smart about finding all requires. It also supports coffee-script files if
+that is your thing.
 
 ## Installation
 By default `ur` gives you a binary, so you might want to install it globally.
@@ -23,14 +26,13 @@ npm install --save ur # put it in your package.json
 
     Commands:
 
-      required <path>        find dependencies that are required but not in package.json
-      unrequired <path>      find dependencies that are in package.json but not required
+      req [path]             find dependencies that are required but not in package.json. defaults to cwd.
+      unreq [path]           find dependencies that are in package.json but not required. defaults to cwd.
 
     Options:
 
       -h, --help     output usage information
       -V, --version  output the version number
-
 
 ## API
 

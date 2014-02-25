@@ -8,6 +8,7 @@ var detective = require('detective')
 var async = require('async')
 var _ = require('underscore')
 var builtins = require('builtins')
+var coffee = require('coffee-script')
 
 /**
  * Find the package.json in a directory and return its dependencies.
@@ -32,8 +33,9 @@ function getPackageJsonDependencies(dirPath, cb) {
   })
 }
 
-function isJsFileNotInNodeModules(fileName) {
-  return /\.js$/.test(fileName) &&  !/node_modules/.test(fileName)
+function isJsOrCsFileNotInNodeModules(fileName) {
+  return (/\.js$/.test(fileName) || isCoffee(fileName)) &&
+    !/node_modules/.test(fileName)
 }
 
 /**
@@ -44,19 +46,32 @@ function isJsFileNotInNodeModules(fileName) {
  * @param cb Function - cb(err, files) that will be called with all matching
  *   files once it is done
  */
-function allNonNodeModuleJsFiles(dirPath, cb) {
+function allNonNodeModuleJsOrCsFiles(dirPath, cb) {
   recursivereaddir(dirPath, function(err, files) {
     if (err) return cb(err)
     if (!files) return cb(new Error('No files found T_T'))
 
-    return cb(null, files.filter(isJsFileNotInNodeModules))
+    return cb(null, files.filter(isJsOrCsFileNotInNodeModules))
   })
+}
+
+function isCoffee(filePath) {
+  return coffee.helpers.isCoffee(filePath)
 }
 
 function findRequiresInFile(filePath, cb) {
   fs.readFile(filePath, {encoding: 'utf8'}, function(err, file) {
-    if (err) return cb(err)
-    if (!file) return cb(new Error('no file for ' + filePath))
+    if (err) {
+      return cb(err)
+    }
+
+    if (!file) {
+      return cb(new Error('no file for ' + filePath))
+    }
+
+    if (isCoffee(filePath)) {
+      file = coffee.compile(file)
+    }
 
     var requires = detective(file)
     return cb(null, requires)
@@ -80,7 +95,7 @@ function absoluteRequires(requires) {
 }
 
 function findAllRequires(filePaths, cb) {
-  allNonNodeModuleJsFiles(filePaths, function(err, files) {
+  allNonNodeModuleJsOrCsFiles(filePaths, function(err, files) {
     if (err) return cb(err)
     async.map(files, findRequiresInFile, function(err, requires) {
       if (err) return cb(err)
@@ -140,7 +155,7 @@ function dependenciesButUnrequired(filePath, cb) {
 
 module.exports = {
   getPackageJsonDependencies: getPackageJsonDependencies,
-  allNonNodeModuleJsFiles: allNonNodeModuleJsFiles,
+  allNonNodeModuleJsOrCsFiles: allNonNodeModuleJsOrCsFiles,
   unrequired: dependenciesButUnrequired,
   required: requiredButNotInPackageDependencies
 }
